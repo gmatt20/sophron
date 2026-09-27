@@ -45,5 +45,9 @@
       "category": "public.app-category.productivity",
       "target": "dmg"
     }
+  },
+  "allowScripts": {
+    "electron@32.3.3": true,
+    "esbuild@0.21.5": true
   }
 }
