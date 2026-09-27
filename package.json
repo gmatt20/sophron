@@ -13,6 +13,8 @@
     "package": "electron-vite build && electron-builder --mac --dir"
   },
   "dependencies": {
+    "@orama/orama": "^3.1.18",
+    "ollama": "^0.6.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zustand": "^4.5.5"
@@ -28,6 +30,7 @@
     "electron-vite": "^2.3.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
+    "tsx": "^4.23.15",
     "typescript": "^5.6.2",
     "vite": "^5.4.8"
   },
@@ -37,10 +40,7 @@
     "directories": {
       "output": "release"
     },
-    "files": [
-      "out/**/*",
-      "package.json"
-    ],
+    "files": ["out/**/*", "package.json"],
     "mac": {
       "category": "public.app-category.productivity",
       "target": "dmg"
