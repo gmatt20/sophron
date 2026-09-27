@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import type { SessionPhase } from '@shared/contracts';
 import { MicButton } from './MicButton';
+import { CloseIcon } from './Icons';
 
 interface Props {
   phase: SessionPhase;
@@ -8,10 +9,19 @@ interface Props {
   hasTurns: boolean;
   onStartListening: () => void;
   onStopListening: () => void;
+  onCancel: () => void;
   onSubmit: (text: string) => void;
 }
 
-export function Composer({ phase, level, hasTurns, onStartListening, onStopListening, onSubmit }: Props) {
+export function Composer({
+  phase,
+  level,
+  hasTurns,
+  onStartListening,
+  onStopListening,
+  onCancel,
+  onSubmit
+}: Props) {
   const [text, setText] = useState('');
   const isListening = phase.kind === 'listening';
   const isBusy =
@@ -43,6 +53,17 @@ export function Composer({ phase, level, hasTurns, onStartListening, onStopListe
         aria-label="Your thought"
         className="flex-1 min-w-0 bg-transparent font-serif text-[16px] text-fg placeholder:italic placeholder:text-fg-faint outline-none disabled:cursor-not-allowed"
       />
+      {(isListening || isBusy) && (
+        <button
+          type="button"
+          onClick={onCancel}
+          aria-label="Cancel"
+          title="Cancel"
+          className="shrink-0 w-9 h-9 rounded-full grid place-items-center text-fg-muted hover:text-fg hover:bg-paper transition-colors"
+        >
+          <CloseIcon />
+        </button>
+      )}
       <MicButton phase={phase} level={level} onStart={onStartListening} onStop={onStopListening} />
     </form>
   );
