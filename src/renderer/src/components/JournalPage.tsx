@@ -68,6 +68,29 @@ function ReplayButton({ turn }: { turn: Turn }) {
   );
 }
 
+function ThoughtCard({ thought }: { thought: NonNullable<Turn['thought']> }) {
+  return (
+    <div className="relative">
+      {thought.date && (
+        <div className="hidden min-[1100px]:block absolute -left-[140px] top-2 w-[116px] text-right text-[11.5px] leading-snug text-accent-text">
+          you wrote this
+          <br />
+          on {noteDate(thought.date)}
+        </div>
+      )}
+      <figure className="-rotate-[0.6deg] bg-paper-card border border-line shadow-clip px-5 py-4">
+        <blockquote className="font-serif text-[15px] leading-relaxed text-fg">
+          &ldquo;{thought.content}&rdquo;
+        </blockquote>
+        <figcaption className="mt-2 text-[11px] text-fg-muted truncate" title={thought.source}>
+          {thought.source}
+          {thought.date && <span className="min-[1100px]:hidden"> · {noteDate(thought.date)}</span>}
+        </figcaption>
+      </figure>
+    </div>
+  );
+}
+
 const PENDING_COPY: Partial<Record<SessionPhase['kind'], string>> = {
   listening: 'Listening…',
   transcribing: 'Writing down what you said…',
