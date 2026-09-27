@@ -20,7 +20,8 @@ interface VoiceState {
 export const useVoice = create<VoiceState>()(
   persist(
     (set) => ({
-      enabled: true,
+      // Off by default — Sophron only speaks when the user enables voice.
+      enabled: false,
       voiceId: 'warm',
       info: null,
       speakingId: null,
@@ -31,7 +32,7 @@ export const useVoice = create<VoiceState>()(
       setSpeakingId: (speakingId) => set({ speakingId })
     }),
     {
-      name: 'sophron-voice',
+      name: 'sophron-voice-v2',
       partialize: (s) => ({ enabled: s.enabled, voiceId: s.voiceId })
     }
   )
