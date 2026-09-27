@@ -3,6 +3,9 @@ import { IPC } from '@shared/ipc';
 import type {
   ReflectionRequest,
   ReflectionResult,
+  SpeechInfo,
+  SpeechRequest,
+  SpeechResult,
   TranscriptionRequest,
   TranscriptionResult,
   VaultInfo
@@ -27,6 +30,11 @@ const api = {
   reflection: {
     reflect: (req: ReflectionRequest): Promise<ReflectionResult> =>
       ipcRenderer.invoke(IPC.reflection.reflect, req)
+  },
+  speech: {
+    info: (): Promise<SpeechInfo> => ipcRenderer.invoke(IPC.speech.info),
+    synthesize: (req: SpeechRequest): Promise<SpeechResult> =>
+      ipcRenderer.invoke(IPC.speech.synthesize, req)
   },
   models: {
     list: (): Promise<string[]> => ipcRenderer.invoke(IPC.models.list),

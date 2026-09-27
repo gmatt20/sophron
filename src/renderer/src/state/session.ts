@@ -39,7 +39,8 @@ interface SessionState {
   setPhase: (phase: SessionPhase) => void;
   setVault: (vault: VaultInfo | null) => void;
   setPending: (said: string | null) => void;
-  addTurn: (turn: Omit<Turn, 'id' | 'at'>) => void;
+  /** Files a turn into the active entry (creating one if needed); returns its id. */
+  addTurn: (turn: Omit<Turn, 'id' | 'at'>) => string;
   newEntry: () => void;
   selectEntry: (id: string) => void;
   deleteEntry: (id: string) => void;
@@ -65,10 +66,10 @@ export const useSession = create<SessionState>()(
       setVault: (vault) => set({ vault }),
       setPending: (pending) => set({ pending }),
 
-      addTurn: (partial) =>
+      addTurn: (partial) => {
+        const turn: Turn = { ...partial, id: uid(), at: Date.now() };
         set((s) => {
-          const now = Date.now();
-          const turn: Turn = { ...partial, id: uid(), at: now };
+          const now = turn.at;
           const current = s.entries.find((e) => e.id === s.activeId);
           if (!current) {
             const entry: Entry = {
@@ -84,7 +85,9 @@ export const useSession = create<SessionState>()(
           return {
             entries: [updated, ...s.entries.filter((e) => e.id !== current.id)]
           };
-        }),
+        });
+        return turn.id;
+      },
 
       newEntry: () => set({ activeId: null, pending: null, phase: { kind: 'idle' } }),
       selectEntry: (activeId) => set({ activeId, pending: null, phase: { kind: 'idle' } }),

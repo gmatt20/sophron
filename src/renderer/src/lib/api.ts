@@ -56,6 +56,13 @@ function createBrowserMock(): SophronApi {
         return pick;
       }
     },
+    speech: {
+      // No speech backend outside Electron — the voice controls hide.
+      info: async () => ({ backend: 'none' as const, voices: [] }),
+      synthesize: async () => {
+        throw new Error('Speech is only available in the desktop app.');
+      }
+    },
     models: {
       // No real Ollama outside Electron — return nothing so the picker hides.
       list: async () => [],

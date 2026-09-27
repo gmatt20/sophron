@@ -37,7 +37,7 @@ export function ModelPicker() {
 
   return (
     <label className="flex items-center gap-2 text-[12px] text-fg-muted" title="Reasoning model">
-      <span className="text-fg-faint shrink-0">model</span>
+      <span className="w-9 text-fg-faint shrink-0">model</span>
       <select
         value={current}
         onChange={(e) => onChange(e.target.value)}

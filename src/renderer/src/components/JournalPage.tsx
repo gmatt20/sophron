@@ -1,6 +1,9 @@
 import type { SessionPhase } from '@shared/contracts';
 import { noteDate } from '../lib/format';
+import { speak, stopSpeaking } from '../lib/speech';
 import type { Turn } from '../state/session';
+import { useVoice } from '../state/voice';
+import { SpeakerIcon, StopIcon } from './Icons';
 
 interface Props {
   turns: Turn[];
@@ -50,13 +53,37 @@ function TurnView({ turn }: { turn: Turn }) {
         </figure>
       </div>
 
-      <p
-        className="font-display italic text-[30px] leading-[1.2] text-accent-text"
-        style={{ textWrap: 'balance' as unknown as 'balance' }}
-      >
-        {turn.question}
-      </p>
+      <div className="group/q flex items-start gap-3">
+        <p
+          className="flex-1 font-display italic text-[30px] leading-[1.2] text-accent-text"
+          style={{ textWrap: 'balance' as unknown as 'balance' }}
+        >
+          {turn.question}
+        </p>
+        <ReplayButton turn={turn} />
+      </div>
     </article>
+  );
+}
+
+function ReplayButton({ turn }: { turn: Turn }) {
+  const canSpeak = useVoice((s) => s.info !== null && s.info.backend !== 'none');
+  const speaking = useVoice((s) => s.speakingId === turn.id);
+  if (!canSpeak) return null;
+
+  return (
+    <button
+      type="button"
+      onClick={() => (speaking ? stopSpeaking() : speak(turn.question, turn.id, { force: true }))}
+      aria-label={speaking ? 'Stop reading' : 'Read this question aloud'}
+      title={speaking ? 'Stop' : 'Read aloud'}
+      className={[
+        'mt-2 p-1.5 rounded-full text-accent-text transition-opacity',
+        speaking ? 'opacity-100' : 'opacity-0 group-hover/q:opacity-60 hover:!opacity-100 focus:opacity-100'
+      ].join(' ')}
+    >
+      {speaking ? <StopIcon size={14} /> : <SpeakerIcon size={16} />}
+    </button>
   );
 }
 
