@@ -1,4 +1,4 @@
-import { BrowserWindow, shell } from 'electron';
+import { BrowserWindow, nativeTheme, shell } from 'electron';
 import { join } from 'node:path';
 
 export function createWindow(): BrowserWindow {
@@ -8,7 +8,8 @@ export function createWindow(): BrowserWindow {
     minWidth: 860,
     minHeight: 600,
     show: false,
-    backgroundColor: '#08080a',
+    // Matches the renderer's paper / ink background to avoid a flash on open.
+    backgroundColor: nativeTheme.shouldUseDarkColors ? '#0b0b10' : '#f4efe4',
     titleBarStyle: 'hiddenInset',
     trafficLightPosition: { x: 18, y: 18 },
     vibrancy: 'under-window',

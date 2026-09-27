@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import type {
   PastThought,
   ReflectionResult,
@@ -6,34 +7,99 @@ import type {
   VaultInfo
 } from '@shared/contracts';
 
+/** One exchange: what you said, the thought Sophron recalled, and its question. */
+export interface Turn {
+  id: string;
+  said: string;
+  via: 'voice' | 'text';
+  thought: PastThought;
+  question: string;
+  at: number;
+}
+
+/** A journal entry is a conversation: a titled run of turns. */
+export interface Entry {
+  id: string;
+  title: string;
+  createdAt: number;
+  updatedAt: number;
+  turns: Turn[];
+}
+
 interface SessionState {
   phase: SessionPhase;
   vault: VaultInfo | null;
-  transcript: string;
-  result: ReflectionResult | null;
+  /** What the user said for the turn currently in flight, once known. */
+  pending: string | null;
+
+  entries: Entry[];
+  /** null means a fresh, unsaved page. */
+  activeId: string | null;
 
   setPhase: (phase: SessionPhase) => void;
   setVault: (vault: VaultInfo | null) => void;
-  setTranscript: (t: string) => void;
-  setResult: (r: ReflectionResult | null) => void;
-  reset: () => void;
+  setPending: (said: string | null) => void;
+  addTurn: (turn: Omit<Turn, 'id' | 'at'>) => void;
+  newEntry: () => void;
+  selectEntry: (id: string) => void;
+  deleteEntry: (id: string) => void;
 }
 
-export const useSession = create<SessionState>((set) => ({
-  phase: { kind: 'idle' },
-  vault: null,
-  transcript: '',
-  result: null,
+const uid = () => crypto.randomUUID();
 
-  setPhase: (phase) => set({ phase }),
-  setVault: (vault) => set({ vault }),
-  setTranscript: (transcript) => set({ transcript }),
-  setResult: (result) => set({ result }),
-  reset: () => set({
-    phase: { kind: 'idle' },
-    transcript: '',
-    result: null
-  })
-}));
+const titleFrom = (said: string) => {
+  const clean = said.trim().replace(/\s+/g, ' ');
+  return clean.length > 48 ? `${clean.slice(0, 47).trimEnd()}…` : clean;
+};
+
+export const useSession = create<SessionState>()(
+  persist(
+    (set) => ({
+      phase: { kind: 'idle' },
+      vault: null,
+      pending: null,
+      entries: [],
+      activeId: null,
+
+      setPhase: (phase) => set({ phase }),
+      setVault: (vault) => set({ vault }),
+      setPending: (pending) => set({ pending }),
+
+      addTurn: (partial) =>
+        set((s) => {
+          const now = Date.now();
+          const turn: Turn = { ...partial, id: uid(), at: now };
+          const current = s.entries.find((e) => e.id === s.activeId);
+          if (!current) {
+            const entry: Entry = {
+              id: uid(),
+              title: titleFrom(turn.said),
+              createdAt: now,
+              updatedAt: now,
+              turns: [turn]
+            };
+            return { entries: [entry, ...s.entries], activeId: entry.id };
+          }
+          const updated = { ...current, updatedAt: now, turns: [...current.turns, turn] };
+          return {
+            entries: [updated, ...s.entries.filter((e) => e.id !== current.id)]
+          };
+        }),
+
+      newEntry: () => set({ activeId: null, pending: null, phase: { kind: 'idle' } }),
+      selectEntry: (activeId) => set({ activeId, pending: null, phase: { kind: 'idle' } }),
+      deleteEntry: (id) =>
+        set((s) => ({
+          entries: s.entries.filter((e) => e.id !== id),
+          activeId: s.activeId === id ? null : s.activeId
+        }))
+    }),
+    {
+      name: 'sophron-journal',
+      version: 1,
+      partialize: (s) => ({ entries: s.entries, activeId: s.activeId })
+    }
+  )
+);
 
 export type { PastThought, ReflectionResult, SessionPhase, VaultInfo };

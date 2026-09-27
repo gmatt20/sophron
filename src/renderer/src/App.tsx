@@ -1,77 +1,61 @@
-import { TitleBar } from './components/TitleBar';
-import { VaultBar } from './components/VaultBar';
-import { StatusPill } from './components/StatusPill';
-import { MicButton } from './components/MicButton';
-import { Transcript } from './components/Transcript';
-import { PastThoughtCard } from './components/PastThoughtCard';
-import { SocraticQuestion } from './components/SocraticQuestion';
+import { useEffect, useRef } from 'react';
+import { Sidebar } from './components/Sidebar';
+import { JournalHeader } from './components/JournalHeader';
+import { JournalPage } from './components/JournalPage';
+import { Composer } from './components/Composer';
 import { ErrorBanner } from './components/ErrorBanner';
 import { useReflect } from './hooks/useReflect';
 import { useSession } from './state/session';
+import { useApplyTheme } from './state/theme';
 
 export default function App() {
+  useApplyTheme();
+
   const {
     phase,
     level,
-    recorderError,
     beginListening,
     finishAndReflect,
-    reset
+    submitText,
+    dismissError
   } = useReflect();
 
-  const transcript = useSession((s) => s.transcript);
-  const result = useSession((s) => s.result);
+  const vault = useSession((s) => s.vault);
+  const pending = useSession((s) => s.pending);
+  const entry = useSession((s) => s.entries.find((e) => e.id === s.activeId) ?? null);
+  const turns = entry?.turns ?? [];
 
-  const showTranscript =
-    phase.kind !== 'idle' && phase.kind !== 'listening' && transcript.length > 0;
-  const showResult = phase.kind === 'ready' && result !== null;
+  // Keep the newest writing in view as the page grows.
+  const scrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+  }, [turns.length, pending, phase.kind]);
+
+  const error = phase.kind === 'error' ? phase.message : null;
 
   return (
-    <div className="min-h-screen flex flex-col bg-ink-950 text-bone-50">
-      <TitleBar />
+    <div className="h-screen flex bg-paper text-fg overflow-hidden">
+      <Sidebar />
 
-      <div className="no-drag flex items-center justify-between px-8 py-4 border-b border-ink-800/70">
-        <VaultBar />
-        <StatusPill phase={phase} />
-      </div>
+      <main className="flex-1 min-w-0 flex flex-col">
+        <JournalHeader phase={phase} vaultName={vault?.name ?? null} date={entry?.createdAt ?? Date.now()} />
 
-      <main className="no-drag flex-1 flex flex-col">
-        <div className="flex-1 flex flex-col items-center justify-center px-8 gap-16 py-12">
-          <MicButton
-            phase={phase}
-            level={level}
-            onStart={beginListening}
-            onStop={finishAndReflect}
-            onReset={reset}
-          />
-
-          {(showTranscript || showResult) && (
-            <div className="w-full flex flex-col gap-14">
-              {showTranscript && <Transcript transcript={transcript} />}
-              {showResult && result && (
-                <>
-                  <PastThoughtCard thought={result.thought} />
-                  <SocraticQuestion question={result.question} />
-                </>
-              )}
-            </div>
-          )}
-
-          {(recorderError || phase.kind === 'error') && (
-            <ErrorBanner
-              message={
-                recorderError ??
-                (phase.kind === 'error' ? phase.message : 'Something went wrong.')
-              }
-              onDismiss={reset}
-            />
-          )}
+        <div ref={scrollRef} className="ruled flex-1 overflow-y-auto px-10">
+          <JournalPage turns={turns} pending={pending} phase={phase} />
         </div>
 
-        <footer className="px-8 py-5 border-t border-ink-800/70 text-[10px] uppercase tracking-[0.28em] text-bone-400/60 flex justify-between">
-          <span>Speak · Remember · Reflect</span>
-          <span>Local. Private. Yours.</span>
-        </footer>
+        <div className="px-10 pt-4 bg-paper">
+          {error && <ErrorBanner message={error} onDismiss={dismissError} />}
+          <Composer
+            phase={phase}
+            level={level}
+            hasTurns={turns.length > 0}
+            onStartListening={beginListening}
+            onStopListening={finishAndReflect}
+            onSubmit={submitText}
+          />
+        </div>
       </main>
     </div>
   );
