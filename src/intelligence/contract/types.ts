@@ -24,8 +24,9 @@ export interface PastThought {
 
 /** The only thing the Electron app receives back. */
 export interface ReflectionResult {
-  thought: PastThought;
-  /** Exactly one Socratic question, ~40 words or fewer. */
+  /** The recalled note, in socratic mode. Absent for a plain chat reply. */
+  thought?: PastThought;
+  /** The assistant's text: one Socratic question, or a normal reply in chat mode. */
   question: string;
 }
 

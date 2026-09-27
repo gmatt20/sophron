@@ -12,7 +12,8 @@ export interface Turn {
   id: string;
   said: string;
   via: 'voice' | 'text';
-  thought: PastThought;
+  /** The recalled note, in socratic mode. Absent for a plain chat reply. */
+  thought?: PastThought;
   question: string;
   at: number;
 }

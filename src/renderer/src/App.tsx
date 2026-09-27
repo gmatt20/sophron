@@ -3,7 +3,6 @@ import { Sidebar } from './components/Sidebar';
 import { JournalHeader } from './components/JournalHeader';
 import { JournalPage } from './components/JournalPage';
 import { Composer } from './components/Composer';
-import { VoiceOverlay } from './components/VoiceOverlay';
 import { ErrorBanner } from './components/ErrorBanner';
 import { useReflect } from './hooks/useReflect';
 import { useSession } from './state/session';
@@ -18,6 +17,7 @@ export default function App() {
     beginListening,
     finishAndReflect,
     submitText,
+    cancel,
     dismissError
   } = useReflect();
 
@@ -54,12 +54,11 @@ export default function App() {
             hasTurns={turns.length > 0}
             onStartListening={beginListening}
             onStopListening={finishAndReflect}
+            onCancel={cancel}
             onSubmit={submitText}
           />
         </div>
       </main>
-
-      <VoiceOverlay phase={phase} level={level} onStop={finishAndReflect} />
     </div>
   );
 }
