@@ -18,4 +18,24 @@ export async function embed(input: string[]): Promise<number[][]> {
   return res.embeddings;
 }
 
+/**
+ * Run the reasoning model with a system + user turn and return its text.
+ * `num_predict` is capped low — the target output is a single short question.
+ */
+export async function generate(system: string, user: string): Promise<string> {
+  const res = await client.chat({
+    model: config.ollama.model,
+    // Disable "thinking": these local models otherwise spend the whole token
+    // budget in a reasoning field and return empty content. We want the answer.
+    think: false,
+    messages: [
+      { role: 'system', content: system },
+      { role: 'user', content: user },
+    ],
+    options: { temperature: config.ollama.temperature, num_predict: 200 },
+    stream: false,
+  });
+  return res.message.content.trim();
+}
+
 export { client as ollama };
