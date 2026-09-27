@@ -14,10 +14,14 @@ export interface IntelligenceConfig {
     host: string;
     /** The one place the reasoning model is chosen. */
     model: string;
+    /** Model used to embed notes and queries for semantic retrieval. */
+    embeddingModel: string;
     /** Low temperature keeps the Socratic question grounded. */
     temperature: number;
   };
   retrieval: {
+    /** How the retriever ranks notes: lexical, semantic, or both. */
+    mode: 'keyword' | 'vector' | 'hybrid';
     /** How many candidate notes to surface. */
     topK: number;
     /** Cap on excerpt length returned as a PastThought. */
@@ -34,9 +38,12 @@ export const config: IntelligenceConfig = {
   ollama: {
     host: process.env.OLLAMA_HOST ?? 'http://localhost:11434',
     model: process.env.SOPHRON_MODEL ?? 'gemma4:26b-mlx',
+    embeddingModel: process.env.SOPHRON_EMBED_MODEL ?? 'nomic-embed-text',
     temperature: Number(process.env.SOPHRON_TEMPERATURE ?? 0.4),
   },
   retrieval: {
+    mode:
+      (process.env.SOPHRON_RETRIEVAL_MODE as IntelligenceConfig['retrieval']['mode']) ?? 'vector',
     topK: Number(process.env.SOPHRON_TOP_K ?? 4),
     maxExcerptChars: Number(process.env.SOPHRON_MAX_EXCERPT ?? 500),
   },
