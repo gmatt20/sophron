@@ -35,10 +35,7 @@ function TurnView({ turn }: { turn: Turn }) {
       {turn.thought && <ThoughtCard thought={turn.thought} />}
 
       <div className="group/q flex items-start gap-3">
-        <p
-          className="flex-1 font-display italic text-[30px] leading-[1.2] text-accent-text"
-          style={{ textWrap: 'balance' as unknown as 'balance' }}
-        >
+        <p className="flex-1 font-serif text-[19px] leading-[1.75] text-fg whitespace-pre-wrap">
           {turn.question}
         </p>
         <ReplayButton turn={turn} />
