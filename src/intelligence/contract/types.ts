@@ -9,6 +9,8 @@
 /** What the user just said/wrote, transcribed upstream (mic/whisper are not ours). */
 export interface ReflectionRequest {
   transcript: string;
+  /** Absolute path to the vault the user selected; falls back to config when omitted. */
+  vaultPath?: string;
 }
 
 /** A single relevant excerpt retrieved from the user's Markdown history. */
