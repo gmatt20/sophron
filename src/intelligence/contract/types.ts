@@ -11,6 +11,8 @@ export interface ReflectionRequest {
   transcript: string;
   /** Absolute path to the vault the user selected; falls back to config when omitted. */
   vaultPath?: string;
+  /** 'chat' = normal reply (default); 'socratic' = recall a note + one question. */
+  mode?: 'chat' | 'socratic';
 }
 
 /** A single relevant excerpt retrieved from the user's Markdown history. */
@@ -24,8 +26,9 @@ export interface PastThought {
 
 /** The only thing the Electron app receives back. */
 export interface ReflectionResult {
-  thought: PastThought;
-  /** Exactly one Socratic question, ~40 words or fewer. */
+  /** The recalled note, in socratic mode. Absent for a plain chat reply. */
+  thought?: PastThought;
+  /** The assistant's text: one Socratic question, or a normal reply in chat mode. */
   question: string;
 }
 

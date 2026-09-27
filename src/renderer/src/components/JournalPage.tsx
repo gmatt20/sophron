@@ -29,34 +29,44 @@ function TurnView({ turn }: { turn: Turn }) {
     <article className="animate-fade-up flex flex-col gap-8">
       <Said text={turn.said} />
 
-      <div className="relative">
-        {turn.thought.date && (
-          <div className="hidden min-[1100px]:block absolute -left-[140px] top-2 w-[116px] text-right text-[11.5px] leading-snug text-accent-text">
-            you wrote this
-            <br />
-            on {noteDate(turn.thought.date)}
-          </div>
-        )}
-        <figure className="-rotate-[0.6deg] bg-paper-card border border-line shadow-clip px-5 py-4">
-          <blockquote className="font-serif text-[15px] leading-relaxed text-fg">
-            &ldquo;{turn.thought.content}&rdquo;
-          </blockquote>
-          <figcaption className="mt-2 text-[11px] text-fg-muted truncate" title={turn.thought.source}>
-            {turn.thought.source}
-            {turn.thought.date && (
-              <span className="min-[1100px]:hidden"> · {noteDate(turn.thought.date)}</span>
-            )}
-          </figcaption>
-        </figure>
-      </div>
+      {turn.thought && <ThoughtCard thought={turn.thought} />}
 
-      <p
-        className="font-display italic text-[30px] leading-[1.2] text-accent-text"
-        style={{ textWrap: 'balance' as unknown as 'balance' }}
-      >
-        {turn.question}
-      </p>
+      {turn.thought ? (
+        <p
+          className="font-display italic text-[30px] leading-[1.2] text-accent-text"
+          style={{ textWrap: 'balance' as unknown as 'balance' }}
+        >
+          {turn.question}
+        </p>
+      ) : (
+        <p className="font-serif text-[18px] leading-8 text-fg whitespace-pre-wrap">
+          {turn.question}
+        </p>
+      )}
     </article>
+  );
+}
+
+function ThoughtCard({ thought }: { thought: NonNullable<Turn['thought']> }) {
+  return (
+    <div className="relative">
+      {thought.date && (
+        <div className="hidden min-[1100px]:block absolute -left-[140px] top-2 w-[116px] text-right text-[11.5px] leading-snug text-accent-text">
+          you wrote this
+          <br />
+          on {noteDate(thought.date)}
+        </div>
+      )}
+      <figure className="-rotate-[0.6deg] bg-paper-card border border-line shadow-clip px-5 py-4">
+        <blockquote className="font-serif text-[15px] leading-relaxed text-fg">
+          &ldquo;{thought.content}&rdquo;
+        </blockquote>
+        <figcaption className="mt-2 text-[11px] text-fg-muted truncate" title={thought.source}>
+          {thought.source}
+          {thought.date && <span className="min-[1100px]:hidden"> · {noteDate(thought.date)}</span>}
+        </figcaption>
+      </figure>
+    </div>
   );
 }
 
@@ -88,8 +98,9 @@ function EmptyPage() {
     <div className="w-full max-w-[600px] mx-auto pt-16 animate-fade-up">
       <p className="font-display italic text-[40px] leading-tight text-fg">What’s on your mind?</p>
       <p className="mt-4 font-serif text-[17px] leading-8 text-fg-muted">
-        Speak or write it down. Sophron will find something you once wrote that’s related,
-        and ask you one question about it.
+        Speak or write it down. Sophron replies like a companion — or flip on
+        <span className="text-accent-text"> Socratic questions</span> and it will
+        recall something you once wrote and ask you one question about it.
       </p>
     </div>
   );

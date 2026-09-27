@@ -12,10 +12,13 @@ export interface Turn {
   id: string;
   said: string;
   via: 'voice' | 'text';
-  thought: PastThought;
+  /** The recalled note, in socratic mode. Absent for a plain chat reply. */
+  thought?: PastThought;
   question: string;
   at: number;
 }
+
+export type ReflectMode = 'chat' | 'socratic';
 
 /** A journal entry is a conversation: a titled run of turns. */
 export interface Entry {
@@ -29,6 +32,8 @@ export interface Entry {
 interface SessionState {
   phase: SessionPhase;
   vault: VaultInfo | null;
+  /** Whether replies are plain chat or Socratic recall. */
+  mode: ReflectMode;
   /** What the user said for the turn currently in flight, once known. */
   pending: string | null;
 
@@ -38,6 +43,7 @@ interface SessionState {
 
   setPhase: (phase: SessionPhase) => void;
   setVault: (vault: VaultInfo | null) => void;
+  setMode: (mode: ReflectMode) => void;
   setPending: (said: string | null) => void;
   addTurn: (turn: Omit<Turn, 'id' | 'at'>) => void;
   newEntry: () => void;
@@ -57,12 +63,14 @@ export const useSession = create<SessionState>()(
     (set) => ({
       phase: { kind: 'idle' },
       vault: null,
+      mode: 'chat',
       pending: null,
       entries: [],
       activeId: null,
 
       setPhase: (phase) => set({ phase }),
       setVault: (vault) => set({ vault }),
+      setMode: (mode) => set({ mode }),
       setPending: (pending) => set({ pending }),
 
       addTurn: (partial) =>
@@ -97,7 +105,7 @@ export const useSession = create<SessionState>()(
     {
       name: 'sophron-journal',
       version: 1,
-      partialize: (s) => ({ entries: s.entries, activeId: s.activeId })
+      partialize: (s) => ({ entries: s.entries, activeId: s.activeId, mode: s.mode })
     }
   )
 );

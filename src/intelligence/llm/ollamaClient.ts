@@ -57,7 +57,7 @@ export async function embed(input: string[]): Promise<number[][]> {
  * Run the reasoning model with a system + user turn and return its text.
  * `num_predict` is capped low — the target output is a single short question.
  */
-export async function generate(system: string, user: string): Promise<string> {
+export async function generate(system: string, user: string, numPredict = 200): Promise<string> {
   const res = await client.chat({
     model: await getModel(),
     // Disable "thinking": these local models otherwise spend the whole token
@@ -67,7 +67,7 @@ export async function generate(system: string, user: string): Promise<string> {
       { role: 'system', content: system },
       { role: 'user', content: user },
     ],
-    options: { temperature: config.ollama.temperature, num_predict: 200 },
+    options: { temperature: config.ollama.temperature, num_predict: numPredict },
     stream: false,
   });
   return res.message.content.trim();

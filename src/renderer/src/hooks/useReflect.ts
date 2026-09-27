@@ -14,6 +14,7 @@ export function useReflect() {
   const recorder = useRecorder();
   const phase = useSession((s) => s.phase);
   const vault = useSession((s) => s.vault);
+  const mode = useSession((s) => s.mode);
   const setPhase = useSession((s) => s.setPhase);
   const setPending = useSession((s) => s.setPending);
   const addTurn = useSession((s) => s.addTurn);
@@ -22,21 +23,24 @@ export function useReflect() {
     async (said: string, via: Turn['via']) => {
       setPending(said);
 
-      setPhase({ kind: 'searching' });
-      // Small deliberate beat so the UI's "Searching memory" state is
-      // legible even when the backend is instant.
-      await new Promise((r) => setTimeout(r, 400));
+      if (mode === 'socratic') {
+        setPhase({ kind: 'searching' });
+        // Small deliberate beat so the UI's "Searching memory" state is
+        // legible even when the backend is instant.
+        await new Promise((r) => setTimeout(r, 400));
+      }
 
       setPhase({ kind: 'reflecting' });
       const result = await api.reflection.reflect({
         transcript: said,
-        vaultPath: vault?.path
+        vaultPath: vault?.path,
+        mode
       });
       addTurn({ said, via, thought: result.thought, question: result.question });
       setPending(null);
       setPhase({ kind: 'idle' });
     },
-    [addTurn, setPending, setPhase, vault]
+    [addTurn, mode, setPending, setPhase, vault]
   );
 
   const fail = useCallback(
