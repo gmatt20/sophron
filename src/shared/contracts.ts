@@ -49,3 +49,28 @@ export type SessionPhase =
   | { kind: 'reflecting' }
   | { kind: 'ready' }
   | { kind: 'error'; message: string };
+
+/** One of the three voices Sophron can speak back in. */
+export interface SpeechVoice {
+  id: string;
+  label: string;
+  description: string;
+}
+
+/** Which backend is currently voicing replies, and the voices it offers. */
+export interface SpeechInfo {
+  /** 'fish' = local Fish Speech server, 'system' = macOS `say`, 'none' = unavailable. */
+  backend: 'fish' | 'system' | 'none';
+  voices: SpeechVoice[];
+}
+
+export interface SpeechRequest {
+  text: string;
+  voiceId: string;
+}
+
+export interface SpeechResult {
+  /** Encoded audio, playable by the renderer as-is. */
+  audio: Uint8Array;
+  mimeType: string;
+}

@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { api } from '../lib/api';
 import { entryStamp } from '../lib/format';
+import { stopSpeaking } from '../lib/speech';
 import { useSession } from '../state/session';
 import { useTheme, type ThemePref } from '../state/theme';
 import { AutoIcon, CloseIcon, FolderIcon, MoonIcon, PenIcon, SunIcon } from './Icons';
 import { ModelPicker } from './ModelPicker';
+import { VoicePicker } from './VoicePicker';
 
 export function Sidebar() {
   const entries = useSession((s) => s.entries);
@@ -24,7 +26,10 @@ export function Sidebar() {
       </div>
 
       <button
-        onClick={newEntry}
+        onClick={() => {
+          stopSpeaking();
+          newEntry();
+        }}
         disabled={busy}
         className="no-drag mx-5 mb-4 flex items-center gap-2 text-[12.5px] text-accent-text hover:opacity-80 disabled:opacity-40 transition-opacity"
       >
@@ -43,7 +48,10 @@ export function Sidebar() {
           return (
             <div key={e.id} className="group relative border-b border-line">
               <button
-                onClick={() => selectEntry(e.id)}
+                onClick={() => {
+                  stopSpeaking();
+                  selectEntry(e.id);
+                }}
                 disabled={busy}
                 className="w-full text-left py-2.5 pr-5 disabled:cursor-wait"
               >
@@ -58,7 +66,10 @@ export function Sidebar() {
                 <span className="block text-[11px] text-fg-muted">{entryStamp(e.updatedAt)}</span>
               </button>
               <button
-                onClick={() => deleteEntry(e.id)}
+                onClick={() => {
+                  if (e.id === activeId) stopSpeaking();
+                  deleteEntry(e.id);
+                }}
                 disabled={busy}
                 aria-label={`Delete “${e.title}”`}
                 className="absolute right-0 top-3 p-1 rounded text-fg-muted opacity-0 group-hover:opacity-100 focus:opacity-100 hover:text-fg transition-opacity"
@@ -72,6 +83,7 @@ export function Sidebar() {
 
       <div className="no-drag border-t border-line px-4 pt-2.5 pb-1.5">
         <ModelPicker />
+        <VoicePicker />
       </div>
       <div className="no-drag px-4 pb-3 flex items-center gap-2">
         <VaultButton />

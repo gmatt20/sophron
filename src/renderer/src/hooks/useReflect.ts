@@ -1,5 +1,6 @@
 import { useCallback, useRef } from 'react';
 import { api } from '../lib/api';
+import { speak, stopSpeaking } from '../lib/speech';
 import { useSession, type Turn } from '../state/session';
 import { useRecorder } from './useRecorder';
 
@@ -37,11 +38,10 @@ export function useReflect() {
         transcript: said,
         vaultPath: vault?.path
       });
-      if (runId.current !== myRun) return;
-
-      addTurn({ said, via, thought: result.thought, question: result.question });
+      const turnId = addTurn({ said, via, thought: result.thought, question: result.question });
       setPending(null);
       setPhase({ kind: 'idle' });
+      void speak(result.question, turnId);
     },
     [addTurn, setPending, setPhase, vault]
   );
@@ -58,6 +58,8 @@ export function useReflect() {
   );
 
   const beginListening = useCallback(async () => {
+    // Never record Sophron's own voice.
+    stopSpeaking();
     setPending(null);
     setPhase({ kind: 'listening' });
     const failure = await recorder.start();
@@ -85,6 +87,7 @@ export function useReflect() {
     async (text: string) => {
       const said = text.trim();
       if (!said) return;
+      stopSpeaking();
       try {
         await reflectOn(said, 'text');
       } catch (e) {

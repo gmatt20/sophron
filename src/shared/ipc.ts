@@ -10,6 +10,10 @@ export const IPC = {
   reflection: {
     reflect: 'reflection:reflect'
   },
+  speech: {
+    info: 'speech:info',
+    synthesize: 'speech:synthesize'
+  },
   models: {
     list: 'models:list',
     get: 'models:get',

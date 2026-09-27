@@ -3,17 +3,20 @@ import { basename } from 'node:path';
 import { IPC } from '@shared/ipc';
 import type {
   ReflectionRequest,
+  SpeechRequest,
   TranscriptionRequest,
   VaultInfo
 } from '@shared/contracts';
 import { getTranscriptionService } from './transcription';
 import { getReflectionService } from './reflection';
+import { getSpeechService } from './speech';
 import { listChatModels, getModel, setModel } from '../intelligence/models';
 import { vaultStore } from './vault';
 
 export function registerIpc(): void {
   const transcription = getTranscriptionService();
   const reflection = getReflectionService();
+  const speech = getSpeechService();
 
   ipcMain.handle(IPC.app.version, () => app.getVersion());
 
@@ -44,6 +47,12 @@ export function registerIpc(): void {
   ipcMain.handle(
     IPC.reflection.reflect,
     async (_event, req: ReflectionRequest) => reflection.reflect(req)
+  );
+
+  ipcMain.handle(IPC.speech.info, () => speech.info());
+  ipcMain.handle(
+    IPC.speech.synthesize,
+    async (_event, req: SpeechRequest) => speech.synthesize(req)
   );
 
   ipcMain.handle(IPC.models.list, () => listChatModels());

@@ -1,5 +1,6 @@
 import type { SessionPhase } from '@shared/contracts';
 import { pageDate } from '../lib/format';
+import { useVoice } from '../state/voice';
 
 const LABEL: Record<SessionPhase['kind'], string> = {
   idle: '',
@@ -18,7 +19,8 @@ interface Props {
 }
 
 export function JournalHeader({ phase, vaultName, date }: Props) {
-  const label = LABEL[phase.kind];
+  const speaking = useVoice((s) => s.speakingId !== null);
+  const label = LABEL[phase.kind] || (speaking ? 'Speaking' : '');
   return (
     <header className="drag-region h-12 shrink-0 px-10 flex items-center justify-between bg-paper text-[12px] text-fg-muted">
       <div className="flex items-center gap-3">

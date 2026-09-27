@@ -61,3 +61,17 @@ export const AutoIcon = ({ size = 14, className }: IconProps) => (
     <path d="M12 4a8 8 0 0 1 0 16Z" fill="currentColor" />
   </svg>
 );
+
+export const SpeakerIcon = ({ size = 14, className }: IconProps) => (
+  <svg {...base(size)} className={className}>
+    <path d="M11 5 6 9H3v6h3l5 4Z" />
+    <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" />
+  </svg>
+);
+
+export const SpeakerOffIcon = ({ size = 14, className }: IconProps) => (
+  <svg {...base(size)} className={className}>
+    <path d="M11 5 6 9H3v6h3l5 4Z" />
+    <path d="m16 9 6 6M22 9l-6 6" />
+  </svg>
+);
