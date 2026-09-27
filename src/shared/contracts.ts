@@ -9,8 +9,6 @@
 export interface ReflectionRequest {
   transcript: string;
   vaultPath?: string;
-  /** 'chat' = normal reply (default); 'socratic' = recall a note + one question. */
-  mode?: 'chat' | 'socratic';
 }
 
 export interface PastThought {

@@ -11,8 +11,6 @@ export interface ReflectionRequest {
   transcript: string;
   /** Absolute path to the vault the user selected; falls back to config when omitted. */
   vaultPath?: string;
-  /** 'chat' = normal reply (default); 'socratic' = recall a note + one question. */
-  mode?: 'chat' | 'socratic';
 }
 
 /** A single relevant excerpt retrieved from the user's Markdown history. */

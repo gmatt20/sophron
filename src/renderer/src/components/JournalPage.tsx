@@ -31,18 +31,9 @@ function TurnView({ turn }: { turn: Turn }) {
 
       {turn.thought && <ThoughtCard thought={turn.thought} />}
 
-      {turn.thought ? (
-        <p
-          className="font-display italic text-[30px] leading-[1.2] text-accent-text"
-          style={{ textWrap: 'balance' as unknown as 'balance' }}
-        >
-          {turn.question}
-        </p>
-      ) : (
-        <p className="font-serif text-[18px] leading-8 text-fg whitespace-pre-wrap">
-          {turn.question}
-        </p>
-      )}
+      <p className="font-serif text-[19px] leading-[1.75] text-fg whitespace-pre-wrap">
+        {turn.question}
+      </p>
     </article>
   );
 }
@@ -98,9 +89,9 @@ function EmptyPage() {
     <div className="w-full max-w-[600px] mx-auto pt-16 animate-fade-up">
       <p className="font-display italic text-[40px] leading-tight text-fg">What’s on your mind?</p>
       <p className="mt-4 font-serif text-[17px] leading-8 text-fg-muted">
-        Speak or write it down. Sophron replies like a companion — or flip on
-        <span className="text-accent-text"> Socratic questions</span> and it will
-        recall something you once wrote and ask you one question about it.
+        Speak or write it down. Sophron responds like a companion — and when it
+        finds something you wrote before that’s related, it brings the note up
+        and asks you a question about it.
       </p>
     </div>
   );
