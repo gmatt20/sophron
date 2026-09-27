@@ -1,55 +1,60 @@
 # Sophron
 
-A local-first Socratic reflection desktop app. You speak about what's on your
-mind; Sophron searches your Obsidian/Markdown history, retrieves a relevant past
-thought, and asks exactly **one** Socratic question — all running locally.
+A local-first desktop instrument for thinking. Speak what's on your mind,
+Sophron retrieves a related thought from your Obsidian vault, and asks you
+exactly one Socratic question.
 
-This repository currently contains the **application foundation** only:
-Electron + TypeScript + Tailwind CSS, with ESLint and Prettier configured. The
-intelligence layer (QM orchestration, vault retrieval, Ollama reasoning) is
-added on top of this shell.
+> Speak · Remember · Reflect
 
 ## Stack
 
-- [Electron](https://www.electronjs.org/) desktop shell
-- [electron-vite](https://electron-vite.org/) for main / preload / renderer builds
-- TypeScript
-- [Tailwind CSS v4](https://tailwindcss.com/) (via `@tailwindcss/vite`)
-- ESLint (flat config) + Prettier
+- **Electron** (main + preload + renderer, sandboxed)
+- **TypeScript** across every process
+- **React** for the renderer
+- **Tailwind CSS** for all styling
+- **whisper.cpp** for local speech-to-text (with a mock fallback so the app
+  works before you install a model)
 
-## Project structure
-
-```
-src/
-  main/       Electron main process (window lifecycle)
-  preload/    Context-isolated bridge to the renderer
-  renderer/   UI (HTML + TypeScript + Tailwind)
-```
-
-## Getting started
+## Quick start
 
 ```bash
 npm install
-npm run dev        # launch the app with hot reload
+npm run dev
 ```
 
-## Scripts
+The app opens with a mock transcription and a mock reflection service, so
+the full Speak → Remember → Reflect loop is drivable end-to-end with no
+external dependencies.
 
-| Script              | Description                            |
-| ------------------- | -------------------------------------- |
-| `npm run dev`       | Run the app in development with HMR    |
-| `npm run build`     | Type-check and build for production    |
-| `npm run preview`   | Preview the production build           |
-| `npm run typecheck` | Type-check main, preload, and renderer |
-| `npm run lint`      | Lint with ESLint                       |
-| `npm run format`    | Format the codebase with Prettier      |
+### Enabling real whisper.cpp
 
-## Roadmap
+Point the app at a locally built [`whisper.cpp`](https://github.com/ggerganov/whisper.cpp)
+binary and a ggml model, then start it:
 
-The reflection engine will expose a single contract to the UI:
-
-```ts
-reflect(request: { transcript: string }): Promise<ReflectionResult>;
+```bash
+export SOPHRON_WHISPER_BIN=/path/to/whisper.cpp/main
+export SOPHRON_WHISPER_MODEL=/path/to/models/ggml-base.en.bin
+npm run dev
 ```
 
-The UI never needs to know how reflection is orchestrated internally.
+The renderer already sends 16 kHz mono PCM WAV — the format whisper.cpp
+expects — so no transcoding step is needed.
+
+## Project layout
+
+```
+src/
+  main/         Electron main process (window, IPC, vault, services)
+    transcription/  TranscriptionService interface + whisper.cpp + mock
+    reflection/     ReflectionService interface + mock
+  preload/      contextBridge surface exposed to the renderer
+  renderer/     React app (Tailwind only, no custom CSS bundles)
+    components/ Small single-purpose UI pieces
+    hooks/      useRecorder (mic → 16k WAV), useReflect (state machine)
+    state/      Session store (zustand)
+  shared/       Contracts and IPC channel names shared across processes
+```
+
+See [`docs/INTEGRATION.md`](docs/INTEGRATION.md) for how the Local
+Intelligence engineer plugs their retrieval + Ollama pipeline in without
+touching the desktop shell.

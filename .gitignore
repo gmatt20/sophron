@@ -1,10 +1,15 @@
 # Dependencies
-node_modules/
+node_modules
 
 # Build output
-out/
-dist/
+out
+dist
+release
 *.tsbuildinfo
+.vite
+
+# Voice / models
+whisper-models
 
 # Logs
 *.log
@@ -18,5 +23,3 @@ npm-debug.log*
 # OS / editor
 .DS_Store
 .idea/
-.vscode/*
-!.vscode/extensions.json

@@ -1,40 +1,53 @@
 {
   "name": "sophron",
   "version": "0.1.0",
-  "description": "Local-first Socratic reflection desktop app (Electron)",
-  "main": "./out/main/index.js",
-  "type": "module",
-  "author": "gmatt.devs",
+  "description": "A personal thinking instrument — speak, remember, reflect.",
+  "main": "out/main/index.js",
+  "author": "Asher Chok",
   "license": "MIT",
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",
-    "preview": "electron-vite preview",
-    "typecheck:node": "tsc --noEmit -p tsconfig.node.json",
-    "typecheck:web": "tsc --noEmit -p tsconfig.web.json",
-    "typecheck": "npm run typecheck:node && npm run typecheck:web",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
-  },
-  "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@tailwindcss/vite": "^4.3.3",
-    "@types/node": "^26.6.3",
-    "electron": "^44.4.5",
-    "electron-vite": "^5.0.0",
-    "eslint": "^10.11.0",
-    "eslint-config-prettier": "^10.1.8",
-    "prettier": "^3.9.9",
-    "tailwindcss": "^4.3.3",
-    "tsx": "^4.23.15",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.70.1",
-    "vite": "^7.3.6"
+    "start": "electron-vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "package": "electron-vite build && electron-builder --mac --dir"
   },
   "dependencies": {
     "@orama/orama": "^3.1.18",
-    "ollama": "^0.6.3"
+    "ollama": "^0.6.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zustand": "^4.5.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.4",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.2",
+    "autoprefixer": "^10.4.20",
+    "electron": "^32.1.2",
+    "electron-builder": "^25.0.5",
+    "electron-vite": "^2.3.0",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.13",
+    "tsx": "^4.23.15",
+    "typescript": "^5.6.2",
+    "vite": "^5.4.8"
+  },
+  "build": {
+    "appId": "com.sophron.app",
+    "productName": "Sophron",
+    "directories": {
+      "output": "release"
+    },
+    "files": ["out/**/*", "package.json"],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": "dmg"
+    }
+  },
+  "allowScripts": {
+    "electron@32.3.3": true,
+    "esbuild@0.21.5": true
   }
 }
