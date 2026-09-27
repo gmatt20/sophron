@@ -20,17 +20,17 @@
     --danger: 168 50 40;
   }
 
-  /* Dark: the original Sophron ink, bone and violet. */
+  /* Dark: the original Sophron all-black — true neutral ink, bone and violet. */
   .dark {
     color-scheme: dark;
-    --paper: 11 11 16;
-    --paper-deep: 14 14 21;
-    --paper-card: 17 17 25;
-    --rule: 22 22 30;
-    --line: 38 38 51;
+    --paper: 10 10 10;
+    --paper-deep: 6 6 6;
+    --paper-card: 20 20 20;
+    --rule: 24 24 24; /* subtle neutral ruling — the notebook lines, on pure black */
+    --line: 34 34 34;
     --fg: 244 241 234;
-    --fg-muted: 140 135 125;
-    --fg-faint: 110 105 98;
+    --fg-muted: 136 132 126;
+    --fg-faint: 102 99 94;
     --accent: 139 92 246;
     --accent-fg: 251 248 241;
     --accent-text: 196 181 253;
