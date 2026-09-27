@@ -26,6 +26,8 @@ export interface IntelligenceConfig {
     topK: number;
     /** Cap on excerpt length returned as a PastThought. */
     maxExcerptChars: number;
+    /** Minimum top-hit score to accept a match; below this we ask for more. */
+    minScore: number;
   };
   socratic: {
     /** Hard word ceiling for the final question. */
@@ -46,6 +48,7 @@ export const config: IntelligenceConfig = {
       (process.env.SOPHRON_RETRIEVAL_MODE as IntelligenceConfig['retrieval']['mode']) ?? 'vector',
     topK: Number(process.env.SOPHRON_TOP_K ?? 4),
     maxExcerptChars: Number(process.env.SOPHRON_MAX_EXCERPT ?? 500),
+    minScore: Number(process.env.SOPHRON_MIN_SCORE ?? 0.35),
   },
   socratic: {
     maxWords: Number(process.env.SOPHRON_MAX_WORDS ?? 40),

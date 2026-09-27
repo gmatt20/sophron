@@ -27,6 +27,11 @@ const api = {
   reflection: {
     reflect: (req: ReflectionRequest): Promise<ReflectionResult> =>
       ipcRenderer.invoke(IPC.reflection.reflect, req)
+  },
+  models: {
+    list: (): Promise<string[]> => ipcRenderer.invoke(IPC.models.list),
+    get: (): Promise<string> => ipcRenderer.invoke(IPC.models.get),
+    set: (name: string): Promise<string> => ipcRenderer.invoke(IPC.models.set, name)
   }
 };
 

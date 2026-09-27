@@ -59,11 +59,10 @@ export class ReflectionOrchestrator implements AgentOrchestrator {
     }
 
     const hits = await this.retriever.retrieve(transcript, notes, config.retrieval.topK);
-    if (hits.length === 0) {
-      throw new Error('Could not find a relevant past note for this thought.');
-    }
-
     const top = hits[0];
+    if (!top || top.score < config.retrieval.minScore) {
+      throw new Error("I couldn't connect that to anything you've written yet — try saying a little more.");
+    }
     const thought: PastThought = { content: top.content, source: top.source, date: top.date };
 
     const user = buildReflectionUserMessage({ transcript, past: thought, context });

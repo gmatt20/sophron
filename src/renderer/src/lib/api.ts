@@ -55,6 +55,12 @@ function createBrowserMock(): SophronApi {
         i += 1;
         return pick;
       }
+    },
+    models: {
+      // No real Ollama outside Electron — return nothing so the picker hides.
+      list: async () => [],
+      get: async () => '',
+      set: async (name: string) => name
     }
   };
 }

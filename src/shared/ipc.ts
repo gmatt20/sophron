@@ -10,6 +10,11 @@ export const IPC = {
   reflection: {
     reflect: 'reflection:reflect'
   },
+  models: {
+    list: 'models:list',
+    get: 'models:get',
+    set: 'models:set'
+  },
   app: {
     version: 'app:version'
   }

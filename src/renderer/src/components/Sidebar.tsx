@@ -4,6 +4,7 @@ import { entryStamp } from '../lib/format';
 import { useSession } from '../state/session';
 import { useTheme, type ThemePref } from '../state/theme';
 import { AutoIcon, CloseIcon, FolderIcon, MoonIcon, PenIcon, SunIcon } from './Icons';
+import { ModelPicker } from './ModelPicker';
 
 export function Sidebar() {
   const entries = useSession((s) => s.entries);
@@ -69,7 +70,10 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="no-drag border-t border-line px-4 py-3 flex items-center gap-2">
+      <div className="no-drag border-t border-line px-4 pt-2.5 pb-1.5">
+        <ModelPicker />
+      </div>
+      <div className="no-drag px-4 pb-3 flex items-center gap-2">
         <VaultButton />
         <ThemeButton />
       </div>

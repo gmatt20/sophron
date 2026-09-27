@@ -8,6 +8,7 @@ import type {
 } from '@shared/contracts';
 import { getTranscriptionService } from './transcription';
 import { getReflectionService } from './reflection';
+import { listChatModels, getModel, setModel } from '../intelligence/models';
 import { vaultStore } from './vault';
 
 export function registerIpc(): void {
@@ -44,4 +45,11 @@ export function registerIpc(): void {
     IPC.reflection.reflect,
     async (_event, req: ReflectionRequest) => reflection.reflect(req)
   );
+
+  ipcMain.handle(IPC.models.list, () => listChatModels());
+  ipcMain.handle(IPC.models.get, () => getModel());
+  ipcMain.handle(IPC.models.set, (_event, name: string) => {
+    setModel(name);
+    return getModel();
+  });
 }
