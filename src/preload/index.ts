@@ -1,0 +1,35 @@
+import { contextBridge, ipcRenderer } from 'electron';
+import { IPC } from '@shared/ipc';
+import type {
+  ReflectionRequest,
+  ReflectionResult,
+  TranscriptionRequest,
+  TranscriptionResult,
+  VaultInfo
+} from '@shared/contracts';
+
+/**
+ * The single surface the renderer sees. No Node APIs, no fs, no shell.
+ * Anything the UI needs from the OS goes through here.
+ */
+const api = {
+  app: {
+    version: (): Promise<string> => ipcRenderer.invoke(IPC.app.version)
+  },
+  vault: {
+    get: (): Promise<VaultInfo | null> => ipcRenderer.invoke(IPC.vault.get),
+    pick: (): Promise<VaultInfo | null> => ipcRenderer.invoke(IPC.vault.pick)
+  },
+  transcription: {
+    transcribe: (req: TranscriptionRequest): Promise<TranscriptionResult> =>
+      ipcRenderer.invoke(IPC.transcription.transcribe, req)
+  },
+  reflection: {
+    reflect: (req: ReflectionRequest): Promise<ReflectionResult> =>
+      ipcRenderer.invoke(IPC.reflection.reflect, req)
+  }
+};
+
+export type SophronApi = typeof api;
+
+contextBridge.exposeInMainWorld('sophron', api);
