@@ -34,7 +34,12 @@ export async function getModel(): Promise<string> {
   if (autoModel) return autoModel;
 
   const chat = await listChatModels();
-  autoModel = chat.find((n) => !/coder/i.test(n)) ?? chat[0] ?? config.ollama.model;
+  autoModel =
+    // Prefer our purpose-built Socratic model (built with River) when present.
+    chat.find((n) => /sophron|socratic/i.test(n)) ??
+    chat.find((n) => !/coder/i.test(n)) ??
+    chat[0] ??
+    config.ollama.model;
   return autoModel;
 }
 
