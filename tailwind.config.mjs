@@ -1,5 +1,11 @@
 /** @type {import('tailwindcss').Config} */
+
+// Every colour resolves to a CSS variable defined in src/renderer/src/index.css,
+// so one set of class names serves both the light (paper) and dark (ink) themes.
+const token = (name) => `rgb(var(--${name}) / <alpha-value>)`;
+
 export default {
+  darkMode: 'class',
   content: [
     './src/renderer/index.html',
     './src/renderer/src/**/*.{ts,tsx}'
@@ -7,40 +13,34 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: {
-          950: '#08080a',
-          900: '#0d0d10',
-          850: '#111114',
-          800: '#161619',
-          700: '#1e1e23',
-          600: '#2a2a31',
-          500: '#3a3a44'
+        paper: {
+          DEFAULT: token('paper'),
+          deep: token('paper-deep'),
+          card: token('paper-card')
         },
-        bone: {
-          50:  '#f5f2ec',
-          100: '#ece7dd',
-          200: '#c9c3b6',
-          300: '#8f8b81',
-          400: '#5f5c56'
+        rule: token('rule'),
+        line: token('line'),
+        fg: {
+          DEFAULT: token('fg'),
+          muted: token('fg-muted'),
+          faint: token('fg-faint')
         },
         accent: {
-          DEFAULT: '#8b5cf6',
-          soft: '#a78bfa',
-          deep: '#6d28d9',
-          glow: 'rgba(139, 92, 246, 0.35)'
-        }
+          DEFAULT: token('accent'),
+          fg: token('accent-fg'),
+          text: token('accent-text')
+        },
+        danger: token('danger')
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        serif: ['Instrument Serif', 'Iowan Old Style', 'Georgia', 'serif'],
+        serif: ['Newsreader', 'Iowan Old Style', 'Georgia', 'serif'],
+        display: ['Instrument Serif', 'Iowan Old Style', 'Georgia', 'serif'],
         mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace']
       },
-      letterSpacing: {
-        tightest: '-0.04em'
-      },
       boxShadow: {
-        'inner-hair': 'inset 0 0 0 1px rgba(255,255,255,0.04)',
-        'accent-ring': '0 0 0 1px rgba(139, 92, 246, 0.35), 0 0 40px rgba(139, 92, 246, 0.15)'
+        clip: '0 2px 0 rgb(var(--line))',
+        'accent-ring': '0 0 0 1px rgb(var(--accent) / 0.35), 0 0 32px rgb(var(--accent) / 0.18)'
       },
       transitionTimingFunction: {
         'out-soft': 'cubic-bezier(0.22, 1, 0.36, 1)'

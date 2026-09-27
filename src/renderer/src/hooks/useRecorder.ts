@@ -10,7 +10,8 @@ export interface RecorderState {
 }
 
 export interface RecorderControls extends RecorderState {
-  start: () => Promise<void>;
+  /** Resolves to an error message if the mic could not be opened, else null. */
+  start: () => Promise<string | null>;
   /** Stops the mic and returns the captured audio as 16 kHz mono WAV bytes. */
   stop: () => Promise<Uint8Array>;
 }
@@ -48,7 +49,7 @@ export function useRecorder(): RecorderControls {
 
   useEffect(() => cleanup, [cleanup]);
 
-  const start = useCallback(async () => {
+  const start = useCallback(async (): Promise<string | null> => {
     setError(null);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -85,9 +86,12 @@ export function useRecorder(): RecorderControls {
       processor.connect(ctx.destination);
 
       setRecording(true);
+      return null;
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Microphone access failed');
+      const message = e instanceof Error ? e.message : 'Microphone access failed';
+      setError(message);
       cleanup();
+      return message;
     }
   }, [cleanup]);
 

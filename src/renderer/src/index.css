@@ -3,9 +3,40 @@
 @tailwind utilities;
 
 @layer base {
+  /* Light: warm paper and rust ink. */
   :root {
-    color-scheme: dark;
+    color-scheme: light;
+    --paper: 244 239 228;
+    --paper-deep: 235 228 213;
+    --paper-card: 251 248 240;
+    --rule: 230 223 208;
+    --line: 221 211 191;
+    --fg: 43 38 32;
+    --fg-muted: 140 130 114;
+    --fg-faint: 155 144 125;
+    --accent: 122 62 32;
+    --accent-fg: 251 248 240;
+    --accent-text: 122 62 32;
+    --danger: 168 50 40;
   }
+
+  /* Dark: the original Sophron ink, bone and violet. */
+  .dark {
+    color-scheme: dark;
+    --paper: 11 11 16;
+    --paper-deep: 14 14 21;
+    --paper-card: 17 17 25;
+    --rule: 22 22 30;
+    --line: 38 38 51;
+    --fg: 244 241 234;
+    --fg-muted: 140 135 125;
+    --fg-faint: 110 105 98;
+    --accent: 139 92 246;
+    --accent-fg: 251 248 241;
+    --accent-text: 196 181 253;
+    --danger: 248 113 113;
+  }
+
   html, body, #root {
     height: 100%;
   }
@@ -13,20 +44,15 @@
     font-feature-settings: 'ss01', 'cv11';
   }
   ::selection {
-    background: theme('colors.accent.deep');
-    color: theme('colors.bone.50');
+    background: rgb(var(--accent) / 0.25);
   }
-  /* Hide default scrollbars for a native-desktop feel; keep functionality. */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
   ::-webkit-scrollbar-thumb {
-    background: theme('colors.ink.600');
+    background: rgb(var(--line));
     border-radius: 4px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: theme('colors.ink.500');
   }
 }
 
@@ -37,8 +63,14 @@
   .no-drag {
     -webkit-app-region: no-drag;
   }
-  .hairline {
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  /* Notebook ruling; scrolls with the page rather than staying fixed. */
+  .ruled {
+    background-color: rgb(var(--paper));
+    background-image: repeating-linear-gradient(
+      transparent 0 31px,
+      rgb(var(--rule)) 31px 32px
+    );
+    background-attachment: local;
   }
 }
 
